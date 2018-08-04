@@ -1,7 +1,7 @@
 <template>
   <div class="row center-align">
       <div class="col s12">
-          <h1>{{ time }}</h1>
+          <h1 id="time">{{ time }}</h1>
       </div>
   </div>
 </template>
@@ -25,4 +25,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+#time {
+    font-size: 20vh;
+}
+</style>
 
