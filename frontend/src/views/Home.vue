@@ -1,17 +1,24 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Mah Doods!"/>
-    <router-link to='/about'>About</router-link>
+    <Clock/>
   </div>
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
+import Clock from '@/components/Clock.vue'
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
+    Clock
   }
 }
 </script>
+
+<style>
+html {
+  background-image: url('.././assets/m.jpg')
+}
+</style>
+
+
