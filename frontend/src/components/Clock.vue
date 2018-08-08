@@ -1,6 +1,6 @@
 <template>
-  <div class="row center-align">
-      <div class="col s12">
+  <div class="row">
+      <div class="col s12 center-align">
           <h1 id="time">{{ time }}</h1>
       </div>
   </div>
@@ -8,27 +8,27 @@
 
 <script>
 export default {
-  name: 'Clock',
+  name: "Clock",
   data: function() {
-      return {
-          time: 'hello'
-      }
+    return {
+      time: "hello"
+    };
   },
   mounted: function() {
-      setInterval(() => {
-          let d = new Date();
-          let h = d.getHours()%12;
-          let m = (d.getMinutes()<10?'0':'') + d.getMinutes();
-          let s = (d.getSeconds()<10?'0':'') + d.getSeconds();
-          this.$data.time = h + ":" + m + ":" + s;
-      }, 1000);
+    setInterval(() => {
+      let d = new Date();
+      let h = d.getHours() % 12;
+      let m = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+      let s = (d.getSeconds() < 10 ? "0" : "") + d.getSeconds();
+      this.$data.time = h + ":" + m + ":" + s;
+    }, 1000);
   }
-}
+};
 </script>
 
 <style scoped>
 #time {
-    font-size: 20vh;
+  font-size: 20vh;
 }
 </style>
 
