@@ -2,8 +2,8 @@
     <div class="col s4 z-depth-3 white-text" id="stocks">
         <div class="row flow-text" v-for="stock in stocks" :key="stock.id" id="indivStock">
           <p class="col s4 left-align stockName">{{stock.stock}}</p>
-          <p class="col s5 right-align">${{ stock.price }}</p>
-          <p class="col s3 right-align" :class="stock.color">{{ stock.percent }}%</p>
+          <p class="col s5 right-align">$ {{ stock.price.toFixed(2) }}</p>
+          <p class="col s3 right-align" :class="stock.color">{{ stock.percent.toFixed(2) }}%</p>
         </div>
     </div>
 </template>
@@ -24,6 +24,7 @@ export default {
         {stock: 'Amazon', ticker: 'amzn', price: null, percent: null, color: 'white-text'},
         {stock: 'Microsoft', ticker: 'msft', price: null, percent: null, color: 'white-text'},
         {stock: 'Facebook', ticker: 'fb', price: null, percent: null, color: 'white-text'},
+        {stock: 'Netflix', ticker: 'nflx', price: null, percent: null, color: 'white-text'},
       ]
     };
   },
@@ -49,9 +50,6 @@ export default {
           .then(axios.spread((priceResp, percResp) => {
             this.stocks[i].price = priceResp.data;
             this.stocks[i].percent = percResp.data.changePercent
-            
-            // round to 2 decimal points
-            this.stocks[i].percent = Math.round(this.stocks[i].percent * 100) / 100;
             // choose percentage color based on sign
             this.stocks[i].color = this.stocks[i].percent >= 0 ? 'green-text' : 'red-text';
           }))
