@@ -2,8 +2,8 @@
     <div class="col s4 z-depth-3 white-text" id="stocks">
         <div class="row flow-text" v-for="stock in stocks" :key="stock.id" id="indivStock">
           <p class="col s4 left-align stockName">{{stock.stock}}</p>
-          <p class="col s5 right-align">$ {{ stock.price.toFixed(2) }}</p>
-          <p class="col s3 right-align" :class="stock.color">{{ stock.percent.toFixed(2) }}%</p>
+          <p class="col s5 right-align">$ {{ stock.price }}</p>
+          <p class="col s3 right-align" :class="stock.color">{{ stock.percent }}%</p>
         </div>
     </div>
 </template>
@@ -48,8 +48,8 @@ export default {
       for(let i = 0; i < this.stocks.length; i++) {
         axios.all([this.getStockPrice(i), this.getStockPercentage(i)])
           .then(axios.spread((priceResp, percResp) => {
-            this.stocks[i].price = priceResp.data;
-            this.stocks[i].percent = percResp.data.changePercent
+            this.stocks[i].price = priceResp.data.toFixed(2)
+            this.stocks[i].percent = percResp.data.changePercent.toFixed(2)
             // choose percentage color based on sign
             this.stocks[i].color = this.stocks[i].percent >= 0 ? 'green-text' : 'red-text';
           }))
