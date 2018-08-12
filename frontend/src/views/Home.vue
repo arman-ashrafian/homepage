@@ -5,7 +5,7 @@
     <div class="row left-align white-text">
       <Stocks/>
       <div class="col s2"></div>
-      <Calender/>  
+      <Calendar/>  
     </div>
   </div>
 </template>
@@ -13,7 +13,7 @@
 <script>
 import Clock from "@/components/Clock.vue";
 import Stocks from "@/components/Stocks.vue";
-import Calender from "@/components/Calender.vue"
+import Calendar from "@/components/Calendar.vue"
 
 export default {
   name: "home",
@@ -25,7 +25,7 @@ export default {
   components: {
     Clock,
     Stocks,
-    Calender
+    Calendar
   }
 };
 </script>
