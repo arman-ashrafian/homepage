@@ -23,6 +23,7 @@ export default {
         {stock: 'Tesla', ticker: 'tsla', price: null, percent: null, color: 'white-text'},
         {stock: 'Amazon', ticker: 'amzn', price: null, percent: null, color: 'white-text'},
         {stock: 'Microsoft', ticker: 'msft', price: null, percent: null, color: 'white-text'},
+        {stock: 'Facebook', ticker: 'fb', price: null, percent: null, color: 'white-text'},
       ]
     };
   },

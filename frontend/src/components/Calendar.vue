@@ -67,7 +67,7 @@ export default {
 }
 
 .highlight-day {
-  background-color: blue;
+  background-color: rgba(3,169,244,0.7);
   margin-bottom: 2vh;
 }
 </style>
