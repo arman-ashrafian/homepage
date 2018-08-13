@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 	"golang.org/x/oauth2"
@@ -18,8 +19,8 @@ const (
 var (
 	googleOauthConfig = &oauth2.Config{
 		RedirectURL:  "http://localhost:5500/GoogleCallback",
-		ClientID:     "41260821331-qv9lk54fshae7oal7973q6kj8mqmh3jl.apps.googleusercontent.com",
-		ClientSecret: "txCzHz5fUPFMiRcQ-nC2ihl-",
+		ClientID:     os.Getenv("drive_id"),
+		ClientSecret: os.Getenv("drive_secret"),
 		Scopes: []string{
 			"https://www.googleapis.com/auth/drive",
 			"https://www.googleapis.com/auth/drive.file",
@@ -31,6 +32,7 @@ var (
 )
 
 func main() {
+	fmt.Println(os.Getenv("drive_id"))
 	e := echo.New()
 	fmt.Println("Starting server")
 
