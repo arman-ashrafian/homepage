@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -29,10 +30,11 @@ var (
 	}
 	// Some random string, random for each request
 	oauthStateString = "random"
+	// authorized drive service
+	driveService *drive.Service
 )
 
 func main() {
-	fmt.Println(os.Getenv("drive_id"))
 	e := echo.New()
 	fmt.Println("Starting server")
 
@@ -61,11 +63,36 @@ func handleGoogleCallback(c echo.Context) error {
 	tok, _ := googleOauthConfig.Exchange(oauth2.NoContext, code)
 	client := oauth2.NewClient(oauth2.NoContext, oauth2.StaticTokenSource(tok))
 
-	driveService, _ := drive.New(client)
+	driveService, _ = drive.New(client)
 	fileList, _ := driveService.Files.List().Do()
 
 	for _, i := range fileList.Files {
 		fmt.Println(i.Name)
 	}
+
+	createFile("BIGBOOTYBITCHES.txt")
+
 	return c.String(http.StatusOK, "Fuck Yas")
+}
+
+func createFile(name string) error {
+	file := drive.File{Name: name}
+
+	fileLis, err := driveService.Files.List().Q(
+		"name = 'homepage-journals' and mimeType = 'application/vnd.google-apps.folder'",
+	).Do()
+
+	if err != nil {
+		fmt.Println("couldnt get folder")
+	}
+
+	fmt.Println("FOLDER ID :: " + fileLis.Files[0].Id)
+
+	cr, err := driveService.Files.Create(&file).Do()
+	if err != nil {
+		return errors.New("could not create file")
+	}
+
+	fmt.Println("FILE ID :: " + cr.Id)
+	return nil
 }
