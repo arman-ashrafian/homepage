@@ -1,5 +1,5 @@
 <template>
-  <h1 id="time">{{ time }}</h1>
+  <p id="time">{{ time }}</p>
 </template>
 
 <script>
@@ -22,4 +22,14 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+#time {
+  font-size:10vw;
+  margin: 0;
+}
+
+</style>
+
 
