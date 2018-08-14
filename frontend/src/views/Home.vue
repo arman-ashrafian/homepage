@@ -7,9 +7,9 @@
     </div>
     
     <div class="row white-text">
-      <Stocks/>
-      <div class="col l1 s12"></div>
       <Calendar/>
+      <div class="col l1 s12"></div>
+      <Stocks/>
       <JournalModal/>  
     </div>
   </div>

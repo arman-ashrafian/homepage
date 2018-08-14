@@ -1,13 +1,12 @@
 <template>
   <div id="journalModal" class="modal">
-    <div class="modal-content black-text">
-      <h4>{{ date }}</h4>
-      <p>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Distinctio tenetur error earum dicta atque ea, facere asperiores odio, necessitatibus tempore sequi quibusdam ab voluptas, possimus consectetur repellendus perferendis temporibus ad?
-      </p>
+    <div class="modal-content green-text">
+      <h4 class="center-align">{{ date }}</h4>
+      <textarea spellcheck="false" id="journalEntry" class="materialize-textarea green-text">
+      </textarea>
     </div>
     <div class="modal-footer">
-      <p class="modal-close waves-effect waves-green btn-flat">Save</p>
+      <p id="saveBtn" class="modal-close waves-effect waves-green btn blue">Save</p>
     </div>
   </div>
 </template>
@@ -35,3 +34,25 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+textarea {
+  font-size: 25pt;
+}
+
+.modal, .modal-footer {
+  background-color: rgba(0,0,0,.75)
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+</style>
+
