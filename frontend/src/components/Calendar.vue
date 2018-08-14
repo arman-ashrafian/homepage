@@ -8,7 +8,7 @@
 
       <div class="day center-align" v-for="day in daysInMonths[monthIndex]"
            :key="day">
-          <div :class="{ 'highlight-day': day === today.getDate() }" @click="openModal">
+          <div :class="{ 'highlight-day': day === today.getDate() }" @click="openModal(day)">
             {{ day }}
           </div>
       </div>
@@ -17,6 +17,8 @@
 
 
 <script>
+import { dateBus } from "../main.js"
+
 export default {
   name: "Calendar",
   data: function() {
@@ -59,7 +61,8 @@ export default {
       this.modal = M.Modal.getInstance(elems[0])
     },
 
-    openModal: function() {
+    openModal: function(day) {
+      dateBus.$emit('dateSelected', this.monthIndex+1, day, this.today.getFullYear())
       this.modal.open()
     }
   },

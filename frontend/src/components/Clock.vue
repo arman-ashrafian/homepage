@@ -16,6 +16,7 @@ export default {
       let h = d.getHours() % 12;
       let m = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
       let s = (d.getSeconds() < 10 ? "0" : "") + d.getSeconds();
+      h = (h == 0) ? 12 : h
       this.$data.time = h + ":" + m + ":" + s;
     }, 1000);
   }
