@@ -1,15 +1,16 @@
 <template>
-    <div class="calendar col s4 z-depth-3 white-text">
+    <div class="calendar col s12 l5 z-depth-3 white-text">
       <div id="month">{{monthLabels[monthIndex]}}</div>
       
       <div v-for="day in firstDayOfMonth" :key="day+100">
         <!-- EMPTY SPOTS TO ALIGN DAYS -->
       </div>
 
-      <div :class="{ 'highlight-day': day === today.getDate() }"
-           class="day center-align" v-for="day in daysInMonths[monthIndex]"
+      <div class="day center-align" v-for="day in daysInMonths[monthIndex]"
            :key="day">
-           {{ day }}
+          <div :class="{ 'highlight-day': day === today.getDate() }" @click="openModal">
+            {{ day }}
+          </div>
       </div>
     </div>
 </template>
@@ -25,6 +26,7 @@ export default {
       monthIndex: date.getMonth(),
       firstDayOfMonth: new Date(date.getFullYear(), date.getMonth(), 1).getDay(),
       daysInMonths: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+      modal: null,
       dayLabels: [
         "Sunday",
         "Monday",
@@ -50,10 +52,20 @@ export default {
       ],
     }
   },
-  // mounted: function() {
-  //   this.firstDayOfMonth = new Date(this.today.getFullYear(), this.today.getMonth(), 1).getDay()
-  //   this.monthIndex = this.today.getMonth()
-  // }
+  methods: {
+    initModal: function() {
+      let elems = document.querySelectorAll('.modal');
+      M.Modal.init(elems);
+      this.modal = M.Modal.getInstance(elems[0])
+    },
+
+    openModal: function() {
+      this.modal.open()
+    }
+  },
+  mounted: function() {
+    this.initModal()
+  }
 };
 </script>
 
@@ -64,7 +76,7 @@ export default {
   grid-auto-rows: minmax(60px, auto);
   border: solid black 2px;
   background: rgba(0, 0, 0, 0.7);
-  max-height: 40vh;
+  height: 60vh;
   padding-bottom: 5px;
 }
 
@@ -80,6 +92,5 @@ export default {
 
 .highlight-day {
   background-color: rgba(3,169,244,0.7);
-  margin-bottom: 2vh;
 }
 </style>

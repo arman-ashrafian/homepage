@@ -1,5 +1,5 @@
 <template>
-    <div class="col s4 z-depth-3 white-text" id="stocks">
+    <div class="col s12 l5 z-depth-3 white-text" id="stocks">
         <div class="row flow-text" v-for="stock in stocks" :key="stock.id" id="indivStock">
           <p class="col s4 left-align stockName">{{stock.stock}}</p>
           <p class="col s5 right-align">$ {{ stock.price }}</p>
@@ -69,9 +69,8 @@ export default {
 #stocks {
   border: solid black 2px;
   background: rgba(0, 0, 0, 0.7);
-  max-height: 40vh;
-  width: 30vw;
   overflow-y: auto;
+  height: 60vh;
 }
 
 #indivStock > p {

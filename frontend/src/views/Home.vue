@@ -1,11 +1,16 @@
 <template>
   <div class="home">
-    <Clock/>
+    <div class="row">
+      <div class="col s12 center-align">
+        <Clock/>
+      </div>
+    </div>
     
-    <div class="row left-align white-text">
+    <div class="row white-text">
       <Stocks/>
-      <div class="col s2"></div>
-      <Calendar/>  
+      <div class="col l1 s12"></div>
+      <Calendar/>
+      <JournalModal/>  
     </div>
   </div>
 </template>
@@ -14,6 +19,7 @@
 import Clock from "@/components/Clock.vue";
 import Stocks from "@/components/Stocks.vue";
 import Calendar from "@/components/Calendar.vue"
+import JournalModal from "@/components/JournalModal.vue"
 
 export default {
   name: "home",
@@ -25,7 +31,8 @@ export default {
   components: {
     Clock,
     Stocks,
-    Calendar
+    Calendar,
+    JournalModal,
   }
 };
 </script>
@@ -33,8 +40,8 @@ export default {
 <style>
 html {
   background-image: url(".././assets/m.jpg");
-  background-repeat: "no";
-  background-size: "auto";
+  background-repeat: "yes";
+  background-size:auto;
 }
 </style>
 

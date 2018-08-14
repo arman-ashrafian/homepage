@@ -1,9 +1,5 @@
 <template>
-  <div class="row">
-      <div class="col s12 center-align">
-          <h1 id="time">{{ time }}</h1>
-      </div>
-  </div>
+  <h1 id="time">{{ time }}</h1>
 </template>
 
 <script>
@@ -25,10 +21,4 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-#time {
-  font-size: 20vh;
-}
-</style>
 
