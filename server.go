@@ -57,8 +57,7 @@ func main() {
 
 func handleGoogleLogin(c echo.Context) error {
 	url := googleOauthConfig.AuthCodeURL(oauthStateString)
-	c.Redirect(http.StatusTemporaryRedirect, url)
-	return nil
+	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 func handleGoogleCallback(c echo.Context) error {
@@ -72,20 +71,31 @@ func handleGoogleCallback(c echo.Context) error {
 }
 
 func handleGetJournal(c echo.Context) error {
-	fmt.Println("getting journals")
-
-	fileName := fmt.Sprintf("%s%s%s", c.Param("month"), c.Param("day"), c.Param("year"))
+	fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
 	folderID, _ := getJournalFolderID()
 	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
+
+	fmt.Println("QUERY: " + query)
+
 	fileQ, err := driveService.Files.List().Q(query).Do()
 
 	if err != nil {
-		fmt.Println("error")
+		fmt.Println("ERROR WITH FILE QUERY!!!!!!!")
 	}
 
 	fmt.Println("SIZE OF FILES[] -> " + string(len(fileQ.Files)))
 
-	return c.Redirect(http.StatusPermanentRedirect, "/")
+	respStr := ""
+	// file exists
+	if len(fileQ.Files) > 0 {
+		// return file data
+		respStr = "file exists"
+	} else {
+		respStr = "file created"
+		createFile(fileName + ".txt")
+	}
+
+	return c.JSON(http.StatusOK, respStr)
 }
 
 func getJournalFolderID() (string, error) {
