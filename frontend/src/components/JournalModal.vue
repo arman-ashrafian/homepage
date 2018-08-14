@@ -25,6 +25,7 @@ export default {
     }
   },
   created() {
+    // triggered when calender date is clicked
     dateBus.$on('dateSelected', (month, day, year) => {
       this.date = `${month} - ${day} - ${year}`
       this.month = month
@@ -45,14 +46,9 @@ textarea {
   background-color: rgba(0,0,0,.75)
 }
 
+/* remove scrollbar */
 ::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
+    width: 0px;
 }
-/* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
 </style>
 
