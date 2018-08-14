@@ -64,35 +64,31 @@ func handleGoogleCallback(c echo.Context) error {
 	client := oauth2.NewClient(oauth2.NoContext, oauth2.StaticTokenSource(tok))
 
 	driveService, _ = drive.New(client)
-	fileList, _ := driveService.Files.List().Do()
-
-	for _, i := range fileList.Files {
-		fmt.Println(i.Name)
-	}
 
 	createFile("BIGBOOTYBITCHES.txt")
 
-	return c.String(http.StatusOK, "Fuck Yas")
+	return c.Redirect(http.StatusPermanentRedirect, "/")
 }
 
 func createFile(name string) error {
-	file := drive.File{Name: name}
-
-	fileLis, err := driveService.Files.List().Q(
-		"name = 'homepage-journals' and mimeType = 'application/vnd.google-apps.folder'",
+	// query GDrive for homepage-journal folder
+	folderQ, err := driveService.Files.List().Q(`
+		name = 'homepage-journals' and
+		mimeType = 'application/vnd.google-apps.folder'`,
 	).Do()
 
 	if err != nil {
-		fmt.Println("couldnt get folder")
+		return errors.New("couldnt get folder")
 	}
 
-	fmt.Println("FOLDER ID :: " + fileLis.Files[0].Id)
+	// file in homepage-journal folder
+	file := drive.File{Name: name, Parents: []string{folderQ.Files[0].Id}}
+	// create file in GDrive
+	_, err = driveService.Files.Create(&file).Do()
 
-	cr, err := driveService.Files.Create(&file).Do()
 	if err != nil {
 		return errors.New("could not create file")
 	}
 
-	fmt.Println("FILE ID :: " + cr.Id)
 	return nil
 }
