@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 
@@ -75,24 +76,29 @@ func handleGetJournal(c echo.Context) error {
 	folderID, _ := getJournalFolderID()
 	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
 
-	fmt.Println("QUERY: " + query)
-
 	fileQ, err := driveService.Files.List().Q(query).Do()
 
 	if err != nil {
-		fmt.Println("ERROR WITH FILE QUERY!!!!!!!")
+		fmt.Println("ERROR WITH FILE QUERY!")
 	}
-
-	fmt.Println("SIZE OF FILES[] -> " + string(len(fileQ.Files)))
 
 	respStr := ""
 	// file exists
 	if len(fileQ.Files) > 0 {
 		// return file data
+
+		resp, _ := driveService.Files.Get(fileQ.Files[0].Id).Download()
+		defer resp.Body.Close()
+
+		out, _ := os.Create("downloaded.txt")
+		defer out.Close()
+		io.Copy(out, resp.Body)
+
 		respStr = "file exists"
 	} else {
-		respStr = "file created"
-		createFile(fileName + ".txt")
+		respStr = ""
+		id, _ := createFile(fileName)
+		fmt.Println("FILE CREATED: " + id)
 	}
 
 	return c.JSON(http.StatusOK, respStr)
@@ -116,7 +122,7 @@ func createFile(name string) (string, error) {
 	folderID, _ := getJournalFolderID()
 
 	// file in homepage-journal folder
-	file := drive.File{Name: name, Parents: []string{folderID}}
+	file := drive.File{Name: name, Parents: []string{folderID}, MimeType: /* file */}
 	// create file in GDrive
 	createdFile, err2 := driveService.Files.Create(&file).Do()
 
