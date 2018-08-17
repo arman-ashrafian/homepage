@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -71,6 +71,13 @@ func handleGoogleCallback(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, "/")
 }
 
+// type getJournalResponse struct {
+// 	Body string `json:"body"`
+// }
+
+// API: 'journal/:month/:day/:year
+// If the file exists it returns the text file contents. Otherwise it returns
+// an empty string.
 func handleGetJournal(c echo.Context) error {
 	fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
 	folderID, _ := getJournalFolderID()
@@ -90,18 +97,11 @@ func handleGetJournal(c echo.Context) error {
 		resp, _ := driveService.Files.Get(fileQ.Files[0].Id).Download()
 		defer resp.Body.Close()
 
-		out, _ := os.Create("downloaded.txt")
-		defer out.Close()
-		io.Copy(out, resp.Body)
-
-		respStr = "file exists"
-	} else {
-		respStr = ""
-		id, _ := createFile(fileName)
-		fmt.Println("FILE CREATED: " + id)
+		body, _ := ioutil.ReadAll(resp.Body)
+		respStr = string(body)
 	}
 
-	return c.JSON(http.StatusOK, respStr)
+	return c.String(http.StatusOK, respStr)
 }
 
 func getJournalFolderID() (string, error) {
