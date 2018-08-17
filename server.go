@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/labstack/echo"
 	"golang.org/x/oauth2"
@@ -81,9 +82,8 @@ func handleGetJournal(c echo.Context) error {
 	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
 
 	fileQ, err := driveService.Files.List().Q(query).Do()
-
 	if err != nil {
-		fmt.Println("ERROR WITH FILE QUERY!")
+		return err
 	}
 
 	respStr := ""
@@ -107,14 +107,32 @@ type putJournalRequest struct {
 // API: PUT 'journal/:month/:day/:year
 // check if the file exists and either update or create a new file.
 func handlePutJournal(c echo.Context) error {
-	//fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
+	fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
+	folderID, _ := getJournalFolderID()
+	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
+
+	fileQ, err := driveService.Files.List().Q(query).Do()
+	if err != nil {
+		return err
+	}
 
 	req := new(putJournalRequest)
 	if err := c.Bind(req); err != nil {
 		return err
 	}
 
-	fmt.Println(req.Body)
+	bodyReader := strings.NewReader(req.Body)
+	updatedFile := drive.File{Name: fileName}
+
+	// file exists
+	if len(fileQ.Files) > 0 {
+		driveService.Files.Update(fileQ.Files[0].Id, &updatedFile).
+			Media(bodyReader).Do()
+	} else { // file does not exist
+		id, _ := createFile(fileName)
+		driveService.Files.Update(id, &updatedFile).
+			Media(bodyReader).Do()
+	}
 
 	return nil
 }
