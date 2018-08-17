@@ -86,7 +86,7 @@ func handleGetJournal(c echo.Context) error {
 	// file exists
 	if len(fileQ.Files) > 0 {
 		// return file data
-
+		fmt.Println(fileQ.Files[0].Name)
 		resp, _ := driveService.Files.Get(fileQ.Files[0].Id).Download()
 		defer resp.Body.Close()
 
@@ -122,7 +122,7 @@ func createFile(name string) (string, error) {
 	folderID, _ := getJournalFolderID()
 
 	// file in homepage-journal folder
-	file := drive.File{Name: name, Parents: []string{folderID}, MimeType: /* file */}
+	file := drive.File{Name: name, Parents: []string{folderID}}
 	// create file in GDrive
 	createdFile, err2 := driveService.Files.Create(&file).Do()
 
