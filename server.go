@@ -52,6 +52,7 @@ func main() {
 
 	// api
 	e.GET("/journal/:month/:day/:year", handleGetJournal)
+	e.PUT("/journal/:month/:day/:year", handlePutJournal)
 
 	e.Logger.Fatal(e.Start(port))
 }
@@ -71,11 +72,7 @@ func handleGoogleCallback(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, "/")
 }
 
-// type getJournalResponse struct {
-// 	Body string `json:"body"`
-// }
-
-// API: 'journal/:month/:day/:year
+// API: GET 'journal/:month/:day/:year
 // If the file exists it returns the text file contents. Otherwise it returns
 // an empty string.
 func handleGetJournal(c echo.Context) error {
@@ -93,7 +90,6 @@ func handleGetJournal(c echo.Context) error {
 	// file exists
 	if len(fileQ.Files) > 0 {
 		// return file data
-		fmt.Println(fileQ.Files[0].Name)
 		resp, _ := driveService.Files.Get(fileQ.Files[0].Id).Download()
 		defer resp.Body.Close()
 
@@ -102,6 +98,25 @@ func handleGetJournal(c echo.Context) error {
 	}
 
 	return c.String(http.StatusOK, respStr)
+}
+
+type putJournalRequest struct {
+	Body string `json:"body"`
+}
+
+// API: PUT 'journal/:month/:day/:year
+// check if the file exists and either update or create a new file.
+func handlePutJournal(c echo.Context) error {
+	//fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
+
+	req := new(putJournalRequest)
+	if err := c.Bind(req); err != nil {
+		return err
+	}
+
+	fmt.Println(req.Body)
+
+	return nil
 }
 
 func getJournalFolderID() (string, error) {
