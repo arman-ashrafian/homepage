@@ -3,7 +3,8 @@
     <div class="modal-content green-text">
       <h4 class="center-align">{{ date }}</h4>
       <textarea spellcheck="false" id="journalEntry" 
-      class="materialize-textarea green-text flow-text">
+      class="materialize-textarea green-text flow-text"
+      v-model="currentJournalText">
       </textarea>
     </div>
     <div class="modal-footer">
@@ -13,7 +14,8 @@
 </template>
 
 <script>
-import { dateBus } from "../main.js"
+import axios from "axios";
+import { dateBus } from "../main.js";
 
 export default {
   name: "JournalModal",
@@ -23,29 +25,39 @@ export default {
       day: null,
       month: null,
       year: null,
-    }
+      currentJournalText: ""
+    };
   },
   created() {
     // triggered when calender date is clicked
-    dateBus.$on('dateSelected', (month, day, year) => {
-      this.date = `${month} - ${day} - ${year}`
-      this.month = month
-      this.day = day
-      this.year = year
-    })
+    dateBus.$on("dateSelected", (month, day, year) => {
+      this.date = `${month} - ${day} - ${year}`;
+      this.month = month;
+      this.day = day;
+      this.year = year;
+      // get the journal text for the day
+      axios
+        .get(`/journal/${this.month}/${this.day}/${this.year}`)
+        .then((resp) => {
+          this.currentJournalText = resp.data
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
   }
 };
 </script>
 
 <style scoped>
-
-.modal, .modal-footer {
-  background-color: rgba(0,0,0,.75)
+.modal,
+.modal-footer {
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 /* remove scrollbar */
 ::-webkit-scrollbar {
-    width: 0px;
+  width: 0px;
 }
 </style>
 
