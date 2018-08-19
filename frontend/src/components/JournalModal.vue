@@ -2,7 +2,8 @@
   <div id="journalModal" class="modal">
     <div class="modal-content green-text">
       <h4 class="center-align">{{ date }}</h4>
-      <textarea spellcheck="false" id="journalEntry" class="materialize-textarea green-text">
+      <textarea spellcheck="false" id="journalEntry" 
+      class="materialize-textarea green-text flow-text">
       </textarea>
     </div>
     <div class="modal-footer">
@@ -37,10 +38,6 @@ export default {
 </script>
 
 <style scoped>
-
-textarea {
-  font-size: 25pt;
-}
 
 .modal, .modal-footer {
   background-color: rgba(0,0,0,.75)
