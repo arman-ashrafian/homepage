@@ -10,7 +10,10 @@
 
     </div>
     <div class="modal-footer">
-      <p id="saveBtn" class="modal-close waves-effect waves-green btn blue">Save</p>
+      <p 
+      id="saveBtn" 
+      class="modal-close waves-effect waves-green btn blue"
+      @click="save()">Save</p>
     </div>
   </div>
 </template>
@@ -47,6 +50,16 @@ export default {
           console.log(err);
         });
     });
+  },
+  methods: {
+    save: function() {
+      axios.put(`/journal/${this.month}/${this.day}/${this.year}`,
+      {
+        body: this.currentJournalText
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
   }
 };
 </script>
