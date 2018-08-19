@@ -2,10 +2,12 @@
   <div id="journalModal" class="modal">
     <div class="modal-content green-text">
       <h4 class="center-align">{{ date }}</h4>
+
       <textarea spellcheck="false" id="journalEntry" 
       class="materialize-textarea green-text flow-text"
       v-model="currentJournalText">
       </textarea>
+
     </div>
     <div class="modal-footer">
       <p id="saveBtn" class="modal-close waves-effect waves-green btn blue">Save</p>
@@ -38,10 +40,10 @@ export default {
       // get the journal text for the day
       axios
         .get(`/journal/${this.month}/${this.day}/${this.year}`)
-        .then((resp) => {
-          this.currentJournalText = resp.data
+        .then(resp => {
+          this.currentJournalText = resp.data;
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     });
@@ -53,6 +55,10 @@ export default {
 .modal,
 .modal-footer {
   background-color: rgba(0, 0, 0, 0.75);
+}
+
+textarea {
+  min-height: 40vh;
 }
 
 /* remove scrollbar */
