@@ -14,3 +14,5 @@ Most of the interesting code is in [frontend/src/components](frontend/src/compon
 - remove google login link and just redirect to the the google login if the user trys accesing journal without being logged in.
 - figure out the best naming scheme for files
 - add weather component
+- ability to change month
+- highlight all days on calender that have a journal entry
