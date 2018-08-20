@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -14,14 +15,11 @@ import (
 	drive "google.golang.org/api/drive/v3"
 )
 
-const (
-	port      = ":5500"
-	indexHTML = "frontend/dist/index.html"
-)
+const indexHTML = "frontend/dist/index.html"
 
 var (
 	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:5500/GoogleCallback",
+		RedirectURL:  "http://localhost/GoogleCallback",
 		ClientID:     os.Getenv("drive_id"),
 		ClientSecret: os.Getenv("drive_secret"),
 		Scopes: []string{
@@ -37,6 +35,10 @@ var (
 )
 
 func main() {
+	// parse flags
+	portPtr := flag.String("port", ":80", "server port")
+	flag.Parse()
+
 	e := echo.New()
 	fmt.Println("Starting server")
 
@@ -55,7 +57,7 @@ func main() {
 	e.GET("/journal/:month/:day/:year", handleGetJournal)
 	e.PUT("/journal/:month/:day/:year", handlePutJournal)
 
-	e.Logger.Fatal(e.Start(port))
+	e.Logger.Fatal(e.Start(*portPtr))
 }
 
 func handleGoogleLogin(c echo.Context) error {
