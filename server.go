@@ -71,35 +71,46 @@ func handleGoogleLogin(c echo.Context) error {
 // creates global driveService and redirects to '/'
 func handleGoogleCallback(c echo.Context) error {
 	code := c.FormValue("code")
-	tok, _ := googleOauthConfig.Exchange(oauth2.NoContext, code)
+	tok, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
+	check(err)
 	client := oauth2.NewClient(oauth2.NoContext, oauth2.StaticTokenSource(tok))
 
-	driveService, _ = drive.New(client)
+	driveService, err = drive.New(client)
+	check(err)
 
 	return c.Redirect(http.StatusPermanentRedirect, "/")
 }
 
 // API: GET 'journal/:month/:day/:year
 // If the file exists it returns the text file contents. Otherwise it returns
-// an empty string.
+// an empty string. If user isn't logged in returns error code 401 (unauthorized)
 func handleGetJournal(c echo.Context) error {
-	fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
-	folderID, _ := getJournalFolderID()
-	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
+	fileName := fmt.Sprintf("%s-%s-%s.txt", c.Param("year"), c.Param("month"), c.Param("day"))
+	folderID, err := getJournalFolderID()
+	if err != nil { // unauthorized request to google drive
+		return c.String(http.StatusUnauthorized, "/GoogleLogin")
+	}
 
-	fileQ, err := driveService.Files.List().Q(query).Do()
-	if err != nil {
-		return err
+	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
+	fileQ, err2 := driveService.Files.List().Q(query).Do()
+	if err2 != nil {
+		return c.String(http.StatusUnauthorized, "/GoogleLogin")
 	}
 
 	respStr := ""
 	// file exists
 	if len(fileQ.Files) > 0 {
 		// return file data
-		resp, _ := driveService.Files.Get(fileQ.Files[0].Id).Download()
+		resp, downloadErr := driveService.Files.Get(fileQ.Files[0].Id).Download()
+		if downloadErr != nil {
+			return downloadErr
+		}
 		defer resp.Body.Close()
 
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, readErr := ioutil.ReadAll(resp.Body)
+		if readErr != nil {
+			return readErr
+		}
 		respStr = string(body)
 	}
 
@@ -112,15 +123,20 @@ type putJournalRequest struct {
 }
 
 // API: PUT 'journal/:month/:day/:year
-// check if the file exists and either update or create a new file.
+// Check if the file exists and either update or create a new file. If user isn't logged in
+// returns error code 401 (unauthorized)
 func handlePutJournal(c echo.Context) error {
-	fileName := fmt.Sprintf("%s%s%s.txt", c.Param("month"), c.Param("day"), c.Param("year"))
-	folderID, _ := getJournalFolderID()
+	fileName := fmt.Sprintf("%s-%s-%s.txt", c.Param("year"), c.Param("month"), c.Param("day"))
+	folderID, err := getJournalFolderID()
+	if err != nil {
+		return c.String(http.StatusUnauthorized, "/GoogleLogin")
+	}
+
 	query := fmt.Sprintf("name = '%s' and '%s' in parents", fileName, folderID)
 
-	fileQ, err := driveService.Files.List().Q(query).Do()
-	if err != nil {
-		return err
+	fileQ, err2 := driveService.Files.List().Q(query).Do()
+	if err2 != nil {
+		return c.String(http.StatusUnauthorized, "/GoogleLogin")
 	}
 
 	req := new(putJournalRequest)
@@ -146,6 +162,10 @@ func handlePutJournal(c echo.Context) error {
 
 // returns the ID for the 'homepage-journal' folder in google drive
 func getJournalFolderID() (string, error) {
+	if driveService == nil {
+		return "", errors.New("UNAUTHORIZED REQUEST")
+	}
+
 	// query GDrive for homepage-journal folder
 	folderQ, err := driveService.Files.List().Q(`
 		name = 'homepage-journals' and
@@ -153,7 +173,7 @@ func getJournalFolderID() (string, error) {
 	).Do()
 
 	if err != nil {
-		return "", errors.New("couldnt get folder")
+		return "", err
 	}
 
 	return folderQ.Files[0].Id, nil
@@ -173,4 +193,11 @@ func createFile(name string) (string, error) {
 	}
 
 	return createdFile.Id, nil
+}
+
+// print out error
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
+	}
 }

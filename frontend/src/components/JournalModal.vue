@@ -44,10 +44,10 @@ export default {
       axios
         .get(`/journal/${this.month}/${this.day}/${this.year}`)
         .then(resp => {
-          this.currentJournalText = resp.data;
+          this.currentJournalText = resp.data
         })
-        .catch(err => {
-          console.log(err);
+        .catch(() => {
+          window.location.href = '/GoogleLogin'
         });
     });
   },
@@ -56,8 +56,8 @@ export default {
       axios.put(`/journal/${this.month}/${this.day}/${this.year}`,
       {
         body: this.currentJournalText
-      }).catch((err) => {
-        console.log(err)
+      }).catch(() => {
+        window.location.href = '/GoogleLogin'
       })
     }
   }
