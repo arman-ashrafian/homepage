@@ -39,6 +39,7 @@ func main() {
 	portPtr := flag.String("port", ":80", "server port")
 	flag.Parse()
 
+	// start server
 	e := echo.New()
 	fmt.Println("Starting server")
 
@@ -60,11 +61,14 @@ func main() {
 	e.Logger.Fatal(e.Start(*portPtr))
 }
 
+// redirects user to google login
 func handleGoogleLogin(c echo.Context) error {
 	url := googleOauthConfig.AuthCodeURL(oauthStateString)
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
+// this is called after user logs into google,
+// creates global driveService and redirects to '/'
 func handleGoogleCallback(c echo.Context) error {
 	code := c.FormValue("code")
 	tok, _ := googleOauthConfig.Exchange(oauth2.NoContext, code)
@@ -102,6 +106,7 @@ func handleGetJournal(c echo.Context) error {
 	return c.String(http.StatusOK, respStr)
 }
 
+// JSON request for saving journal
 type putJournalRequest struct {
 	Body string `json:"body"`
 }
@@ -139,6 +144,7 @@ func handlePutJournal(c echo.Context) error {
 	return nil
 }
 
+// returns the ID for the 'homepage-journal' folder in google drive
 func getJournalFolderID() (string, error) {
 	// query GDrive for homepage-journal folder
 	folderQ, err := driveService.Files.List().Q(`
@@ -153,6 +159,7 @@ func getJournalFolderID() (string, error) {
 	return folderQ.Files[0].Id, nil
 }
 
+// create file in google drive homepage-journal folder and return the ID
 func createFile(name string) (string, error) {
 	folderID, _ := getJournalFolderID()
 
