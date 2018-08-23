@@ -2,12 +2,6 @@
   <div class="home">
     <div class="row">
       <div class="col s12 center-align">
-        <a href="/GoogleLogin">LOGIN</a>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col s12 center-align">
         <Clock/>
       </div>
     </div>
